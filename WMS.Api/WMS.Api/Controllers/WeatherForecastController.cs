@@ -31,7 +31,7 @@ namespace WMS.Api.Controllers
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateOnly.FromDateTime(DateTime.Now.AddHours(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
+                TemperatureC = Random.Shared.Next(-40, 60),
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToList();
