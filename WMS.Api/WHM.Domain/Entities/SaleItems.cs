@@ -5,7 +5,7 @@ namespace WMS.Domain.Entities;
 public class SaleItem : EntityBase
 {
     public int Quantity { get; set; }
-    public int UnitPrice { get; set; }
+    public decimal UnitPrice { get; set; }
 
     public int SaleId { get; set; }
     public virtual Sale Sale { get; set; }

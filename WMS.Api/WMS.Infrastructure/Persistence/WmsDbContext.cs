@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using WMS.Domain.Entities;
+using WMS.Domain.Entities.Views;
 
 namespace WMS.Infrastructure.Persistence;
 
@@ -14,6 +15,7 @@ public class WmsDbContext(DbContextOptions<WmsDbContext> options) : DbContext(op
     public virtual DbSet<Supplier> Suppliers { get; set; }
     public virtual DbSet<Supply> Supplies { get; set; }
     public virtual DbSet<SupplyItem> SupplyItem { get; set; }
+    public virtual DbSet<SalesByCategory> SalesByCategory { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

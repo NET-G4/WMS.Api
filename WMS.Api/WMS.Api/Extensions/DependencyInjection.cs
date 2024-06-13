@@ -45,6 +45,9 @@ public static class DependencyInjection
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<ICustomerService, CustomerService>();
         services.AddScoped<ISaleService, SaleService>();
+        services.AddScoped<ISupplierService, SupplierService>();
+        services.AddScoped<ISupplyService, SupplyService>();
+        services.AddScoped<IDashboardService, DashboardService>();
 
         services.AddAutoMapper(typeof(CategoryMappings).Assembly);
     }

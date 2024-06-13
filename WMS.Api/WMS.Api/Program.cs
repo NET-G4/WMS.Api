@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Serilog;
 using WMS.Api.Extensions;
 using WMS.Api.Middlewares;
+using WMS.Infrastructure.Persistence;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -25,6 +26,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<WmsDbContext>();
+
+    DatabaseSeeder.SeedDatabase(context);
 }
 
 app.UseMiddleware<ExceptionHandler>();

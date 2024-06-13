@@ -40,7 +40,15 @@ public class CategoryService(IMapper mapper, WmsDbContext context) : ICategorySe
 
     public List<CategoryDto> GetAll(CategoryQueryParameters queryParameters)
     {
-        var entities = _context.Categories.ToList();
+        var query = _context.Categories.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(queryParameters.Search))
+        {
+            query = query.Where(x => x.Name.Contains(queryParameters.Search) ||
+                (x.Description != null && x.Description.Contains(queryParameters.Search)));
+        }
+
+        var entities = query.ToList();
 
         return _mapper.Map<List<CategoryDto>>(entities);
     }
