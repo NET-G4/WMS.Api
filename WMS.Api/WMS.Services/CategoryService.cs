@@ -3,7 +3,9 @@ using WMS.Domain.Entities;
 using WMS.Domain.Exceptions;
 using WMS.Domain.QueryParameters;
 using WMS.Infrastructure.Persistence;
+using WMS.Services.Common;
 using WMS.Services.DTOs.Category;
+using WMS.Services.Extensions;
 using WMS.Services.Interfaces;
 
 namespace WMS.Services;
@@ -38,7 +40,7 @@ public class CategoryService(IMapper mapper, WmsDbContext context) : ICategorySe
         _context.SaveChanges();
     }
 
-    public List<CategoryDto> GetAll(CategoryQueryParameters queryParameters)
+    public PaginatedList<CategoryDto> GetAll(CategoryQueryParameters queryParameters)
     {
         var query = _context.Categories.AsQueryable();
 
@@ -47,10 +49,10 @@ public class CategoryService(IMapper mapper, WmsDbContext context) : ICategorySe
             query = query.Where(x => x.Name.Contains(queryParameters.Search) ||
                 (x.Description != null && x.Description.Contains(queryParameters.Search)));
         }
+        
+        var result = query.ToPaginatedList<CategoryDto, Category>(_mapper.ConfigurationProvider);
 
-        var entities = query.ToList();
-
-        return _mapper.Map<List<CategoryDto>>(entities);
+        return result;
     }
 
     public CategoryDto GetById(int id)

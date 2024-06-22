@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WMS.Domain.QueryParameters;
+using WMS.Services.Common;
 using WMS.Services.DTOs.Product;
 using WMS.Services.Interfaces;
 
@@ -13,7 +14,7 @@ public class ProductsController(IProductService productService) : ControllerBase
 
     [HttpGet]
     [HttpHead]
-    public ActionResult<List<ProductDto>> Get([FromQuery] ProductQueryParameters queryParameters)
+    public ActionResult<PaginatedList<ProductDto>> Get([FromQuery] ProductQueryParameters queryParameters)
     {
         var result = _productService.GetAll(queryParameters);
 

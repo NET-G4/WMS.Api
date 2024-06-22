@@ -3,7 +3,10 @@ using WMS.Domain.Entities;
 using WMS.Domain.Exceptions;
 using WMS.Domain.QueryParameters;
 using WMS.Infrastructure.Persistence;
+using WMS.Services.Common;
+using WMS.Services.DTOs.Category;
 using WMS.Services.DTOs.Product;
+using WMS.Services.Extensions;
 using WMS.Services.Interfaces;
 
 namespace WMS.Services;
@@ -38,11 +41,11 @@ public class ProductService(IMapper mapper, WmsDbContext context) : IProductServ
         _context.SaveChanges();
     }
 
-    public List<ProductDto> GetAll(ProductQueryParameters queryParameters)
+    public PaginatedList<ProductDto> GetAll(ProductQueryParameters queryParameters)
     {
-        var products = _context.Products.ToList();
+        var products = _context.Products.ToPaginatedList<ProductDto, Product>(_mapper.ConfigurationProvider, 1, 15);
 
-        return _mapper.Map<List<ProductDto>>(products);
+        return products;
     }
 
     public ProductDto GetById(int id)
