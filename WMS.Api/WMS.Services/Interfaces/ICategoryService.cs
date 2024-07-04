@@ -6,6 +6,7 @@ namespace WMS.Services.Interfaces;
 
 public interface ICategoryService
 {
+    Task<List<CategoryDto>> GetAllAsync();
     PaginatedList<CategoryDto> GetAll(CategoryQueryParameters queryParameters);
     CategoryDto GetById(int id);
     CategoryDto Create(CategoryForCreateDto categoryToCreate);

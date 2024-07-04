@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using WMS.Domain.Entities;
 using WMS.Domain.Exceptions;
 using WMS.Domain.QueryParameters;
@@ -53,6 +54,14 @@ public class CategoryService(IMapper mapper, WmsDbContext context) : ICategorySe
         var result = query.ToPaginatedList<CategoryDto, Category>(_mapper.ConfigurationProvider);
 
         return result;
+    }
+
+    public async Task<List<CategoryDto>> GetAllAsync()
+    {
+        var categories = await _context.Categories.ToListAsync();
+        var dtos = _mapper.Map<List<CategoryDto>>(categories);
+
+        return dtos ?? [];
     }
 
     public CategoryDto GetById(int id)

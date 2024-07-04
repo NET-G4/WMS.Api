@@ -1,7 +1,9 @@
 ﻿namespace WMS.Services.DTOs.Supplier;
 
-public record SupplierDto(
-    int Id, 
-    string FullName, 
-    string PhoneNumber, 
-    decimal Balance);
+public class SupplierDto()
+{
+    public int Id { get; init; }
+    public string FullName { get; set; }
+    public string PhoneNumber { get; set; }
+    public decimal Balance { get; set; }
+}
