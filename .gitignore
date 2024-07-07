@@ -396,3 +396,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/WMS.Api/WMS.Services/Mappings/SupplyItemsMappings.cs
