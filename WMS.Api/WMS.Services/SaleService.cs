@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using WMS.Domain.Entities;
 using WMS.Domain.Exceptions;
 using WMS.Infrastructure.Persistence;
@@ -77,7 +78,7 @@ public class SaleService(WmsDbContext context, IMapper mapper) : ISaleService
 
     public List<SaleDto> GetSales()
     {
-        var sales = _context.Sales.ToList();
+        var sales = _context.Sales.Include(x => x.Customer).ToList();
 
         return _mapper.Map<List<SaleDto>>(sales);
     }

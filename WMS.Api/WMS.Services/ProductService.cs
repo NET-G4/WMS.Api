@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using WMS.Domain.Entities;
 using WMS.Domain.Exceptions;
 using WMS.Domain.QueryParameters;
@@ -43,7 +44,22 @@ public class ProductService(IMapper mapper, WmsDbContext context) : IProductServ
 
     public PaginatedList<ProductDto> GetAll(ProductQueryParameters queryParameters)
     {
-        var products = _context.Products.ToPaginatedList<ProductDto, Product>(_mapper.ConfigurationProvider, 1, 15);
+        var query = _context.Products
+            .AsNoTracking()
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(queryParameters.Search))
+        {
+            query = query.Where(x => x.Name.Contains(queryParameters.Search) ||
+                (x.Description != null && x.Description.Contains(queryParameters.Search)));
+        }
+
+        if (queryParameters.CategoryId.HasValue)
+        {
+            query = query.Where(x => x.CategoryId == queryParameters.CategoryId);
+        }
+
+        var products = query.ToPaginatedList<ProductDto, Product>(_mapper.ConfigurationProvider, 1, 15);
 
         return products;
     }

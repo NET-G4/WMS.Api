@@ -5,7 +5,6 @@ using Syncfusion.Pdf.Graphics;
 using Syncfusion.Pdf.Grid;
 using System.Data;
 using WMS.Domain.QueryParameters;
-using WMS.Services;
 using WMS.Services.Common;
 using WMS.Services.DTOs.Category;
 using WMS.Services.Interfaces;

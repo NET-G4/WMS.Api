@@ -5,9 +5,9 @@ using WMS.Services.Interfaces;
 
 namespace WMS.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/suppliers")]
 [ApiController]
-public class SupplierController(ISupplierService service) : ControllerBase
+public class SuppliersController(ISupplierService service) : ControllerBase
 {
     private readonly ISupplierService _supplierService = service
        ?? throw new ArgumentNullException(nameof(service));

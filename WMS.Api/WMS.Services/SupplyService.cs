@@ -65,7 +65,7 @@ namespace WMS.Services
 
         public List<SupplyDto> GetSupplies()
         {
-            var supplies = _context.Supplies.ToList();
+            var supplies = _context.Supplies.Include(x => x.Supplier).ToList();
 
             return _mapper.Map<List<SupplyDto>>(supplies);
         }
