@@ -14,7 +14,7 @@ public class WmsDbContext(DbContextOptions<WmsDbContext> options) : DbContext(op
     public virtual DbSet<SaleItem> SaleItems { get; set; }
     public virtual DbSet<Supplier> Suppliers { get; set; }
     public virtual DbSet<Supply> Supplies { get; set; }
-    public virtual DbSet<SupplyItem> SupplyItem { get; set; }
+    public virtual DbSet<SupplyItem> SupplyItems { get; set; }
     public virtual DbSet<SalesByCategory> SalesByCategory { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -20,6 +20,7 @@ namespace WMS.Services
         ?? throw new ArgumentNullException(nameof(context));
         private readonly IMapper _mapper = mapper
             ?? throw new ArgumentNullException(nameof(mapper));
+
         public SupplyDto Create(SupplyForCreateDto supplyForCreate)
         {
             var entity = _mapper.Map<Supply>(supplyForCreate);
@@ -65,14 +66,21 @@ namespace WMS.Services
 
         public List<SupplyDto> GetSupplies()
         {
-            var supplies = _context.Supplies.Include(x => x.Supplier).ToList();
+            var supplies = _context.Supplies.Include(x => x.Supplier).Include(x => x.SupplyItems).ThenInclude(y => y.Product).ToList();
 
             return _mapper.Map<List<SupplyDto>>(supplies);
         }
 
         public SupplyDto GetSupplyById(int id)
         {
-            var supply = _context.Supplies.FirstOrDefault(x => x.Id == id);
+            var supply = _context
+                .Supplies
+                .AsNoTracking()
+                .Include(x => x.Supplier)
+                .Include(x => x.SupplyItems)
+                .ThenInclude(x => x.Product)
+                .AsSplitQuery()
+                .FirstOrDefault(x => x.Id == id);
 
             if (supply is null)
             {

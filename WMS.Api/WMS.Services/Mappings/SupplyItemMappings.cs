@@ -10,12 +10,12 @@ using WMS.Services.DTOs.SupplyItem;
 
 namespace WMS.Services.Mappings
 {
-    public class SupplyItemsMappings : Profile
+    public class SupplyItemMappings : Profile
     {
-        public SupplyItemsMappings()
+        public SupplyItemMappings()
         {
             CreateMap<SupplyItem, SupplyItemDto>()
-            .ForMember(dto => dto.ProductName, e => e.MapFrom(r => r.Product.Name));
+                .ForMember(dto => dto.Product, e => e.MapFrom(r => r.Product.Name));
             CreateMap<SupplyItemForCreateDto, SupplyItem>();
             CreateMap<SupplyItemForUpdateDto, SupplyItem>();
         }

@@ -66,7 +66,12 @@ public class SaleService(WmsDbContext context, IMapper mapper) : ISaleService
 
     public SaleDto GetSaleById(int id)
     {
-        var sale = _context.Sales.FirstOrDefault(x => x.Id == id);
+        var sale = _context.Sales
+            .AsNoTracking()
+            .Include(x => x.Customer)
+            .Include(x => x.SaleItems)
+            .ThenInclude(x => x.Product)
+            .FirstOrDefault(x => x.Id == id);
 
         if (sale is null)
         {

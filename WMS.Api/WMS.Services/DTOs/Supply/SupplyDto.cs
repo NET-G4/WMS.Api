@@ -1,4 +1,6 @@
-﻿namespace WMS.Services.DTOs.Supply;
+﻿using WMS.Services.DTOs.SupplyItem;
+
+namespace WMS.Services.DTOs.Supply;
 
 public class SupplyDto
 {
@@ -9,4 +11,6 @@ public class SupplyDto
 
     public int SupplierId { get; set; }
     public string Supplier { get; set; }
+
+    public List<SupplyItemDto> SupplyItems { get; set; }
 }

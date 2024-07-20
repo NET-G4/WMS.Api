@@ -8,7 +8,8 @@ public class SaleItemMappings : Profile
 {
     public SaleItemMappings()
     {
-        CreateMap<SaleItem, SaleItemDto>();
+        CreateMap<SaleItem, SaleItemDto>()
+            .ForMember(dto => dto.Product, e => e.MapFrom(e => e.Product.Name));
         CreateMap<SaleItemForCreateDto, SaleItem>();
         CreateMap<SaleItemForUpdateDto, SaleItem>();
     }

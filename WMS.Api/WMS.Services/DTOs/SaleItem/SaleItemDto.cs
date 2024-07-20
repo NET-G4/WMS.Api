@@ -6,5 +6,5 @@ public class SaleItemDto
     public int UnitPrice { get; init; }
     public int SaleId { get; set; }
     public int ProductId { get; init; }
-
+    public string Product { get; init; }
 }

@@ -8,9 +8,9 @@ using WMS.Domain.Entities;
 
 namespace WMS.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/supplies")]
     [ApiController]
-    public class SupplyController(ISupplyService service) : ControllerBase
+    public class SuppliesController(ISupplyService service) : ControllerBase
     {
         private readonly ISupplyService _supplyService = service
             ?? throw new ArgumentNullException(nameof(service));

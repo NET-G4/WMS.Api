@@ -9,5 +9,5 @@ public class SupplyForCreateDto
 
     public int SupplierId { get; set; }
 
-    public ICollection<SupplyItemDto> SupplyItems { get; set; }
+    public ICollection<SupplyItemForCreateDto> SupplyItems { get; set; }
 }

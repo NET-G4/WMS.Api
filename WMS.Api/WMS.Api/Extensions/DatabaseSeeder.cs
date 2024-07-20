@@ -16,6 +16,8 @@ namespace WMS.Api.Extensions
                 AddProducts(context);
                 AddCustomers(context);
                 AddSales(context);
+                AddSuppliers(context);
+                AddSupplies(context);
             }
             catch(Exception ex)
             {
@@ -127,6 +129,59 @@ namespace WMS.Api.Extensions
             context.SaveChanges();
         }
 
+        private static void AddSuppliers(WmsDbContext context)
+        {
+            if (context.Suppliers.Any()) return;
+
+            for (int i = 0; i < 25; i++)
+            {
+                var supplier = new Supplier
+                {
+                    FirstName = _faker.Name.FirstName(),
+                    LastName = _faker.Name.LastName(),
+                    Balance = _faker.Random.Decimal(-100_000, 100_000),
+                    PhoneNumber = _faker.Phone.PhoneNumber("+998-##-###-##-##")
+                };
+
+                context.Suppliers.Add(supplier);
+            }
+
+            context.SaveChanges();
+        }
+
+        private static void AddSupplies(WmsDbContext context)
+        {
+            if (context.SupplyItems.Any()) return;
+
+            var supplierIds = context.Suppliers.Select(x => x.Id).ToArray();
+            var products = context.Products.ToArray();
+
+            foreach (var supplier in supplierIds)
+            {
+                var numberOfSupplies = _faker.Random.Int(1, 15);
+
+                for (int i = 0; i < numberOfSupplies; i++)
+                {
+                    var supplyItems = GetRandomSupplyItems(products);
+                    var totalDue = supplyItems.Sum(x => x.Quantity * x.UnitPrice);
+                    var totalPaid = _faker.Random.Decimal(0, totalDue);
+
+                    var supply = new Supply
+                    {
+                        Date = _faker.Date.Between(DateTime.Now.AddMonths(-12), DateTime.Now),
+                        SupplierId = supplier,
+                        TotalDue = totalDue,
+                        TotalPaid = totalPaid,
+                        SupplyItems = supplyItems,
+                    };
+
+                    context.Supplies.Add(supply);
+                }
+            }
+
+            context.SaveChanges();
+        }
+
         private static SaleItem[] GetRandomSaleItems(Product[] products)
         {
             return Enumerable.Range(2, _faker.Random.Int(2, 10))
@@ -135,6 +190,23 @@ namespace WMS.Api.Extensions
                     var randomProduct = _faker.PickRandom(products);
 
                     return new SaleItem
+                    {
+                        ProductId = randomProduct.Id,
+                        Quantity = _faker.Random.Int(1, 15),
+                        UnitPrice = randomProduct.SalePrice
+                    };
+                })
+                .ToArray();
+        }
+
+        private static SupplyItem[] GetRandomSupplyItems(Product[] products)
+        {
+            return Enumerable.Range(2, _faker.Random.Int(2, 10))
+                .Select(x =>
+                {
+                    var randomProduct = _faker.PickRandom(products);
+
+                    return new SupplyItem
                     {
                         ProductId = randomProduct.Id,
                         Quantity = _faker.Random.Int(1, 15),
