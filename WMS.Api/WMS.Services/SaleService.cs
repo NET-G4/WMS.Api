@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using WMS.Domain.Entities;
 using WMS.Domain.Exceptions;
@@ -81,11 +82,19 @@ public class SaleService(WmsDbContext context, IMapper mapper) : ISaleService
         return _mapper.Map<SaleDto>(sale);
     }
 
-    public List<SaleDto> GetSales()
+    public async Task<List<SaleDto>> GetSales()
     {
-        var sales = _context.Sales.Include(x => x.Customer).ToList();
+        var sales = await _context
+            .Sales
+            .AsNoTracking()
+            .Include(x => x.Customer)
+            .Include(x => x.SaleItems)
+            .ThenInclude(x => x.Product)
+            .AsSplitQuery()
+            .ProjectTo<SaleDto>(_mapper.ConfigurationProvider)
+            .ToListAsync();
 
-        return _mapper.Map<List<SaleDto>>(sales);
+        return sales;
     }
 
     public void Update(SaleForUpdateDto sale)

@@ -16,9 +16,9 @@ namespace WMS.Api.Controllers
             ?? throw new ArgumentNullException(nameof(service));
 
         [HttpGet]
-        public ActionResult<List<SupplyDto>> Get()
+        public async Task<ActionResult<List<SupplyDto>>> Get()
         {
-            var supplies = _supplyService.GetSupplies();
+            var supplies = await _supplyService.GetSupplies();
 
             return Ok(supplies);
         }
