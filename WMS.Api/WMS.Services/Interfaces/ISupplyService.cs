@@ -9,7 +9,7 @@ namespace WMS.Services.Interfaces
 {
     public interface ISupplyService
     {
-        List<SupplyDto> GetSupplies();
+        Task<List<SupplyDto>> GetSupplies();
         SupplyDto GetSupplyById(int id);
         SupplyDto Create(SupplyForCreateDto supplyForCreate);
         void Update(SupplyForUpdateDto supplyForUpdate);

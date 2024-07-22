@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -64,11 +65,18 @@ namespace WMS.Services
             _context.SaveChanges();
         }
 
-        public List<SupplyDto> GetSupplies()
+        public async Task<List<SupplyDto>> GetSupplies()
         {
-            var supplies = _context.Supplies.Include(x => x.Supplier).Include(x => x.SupplyItems).ThenInclude(y => y.Product).ToList();
+            var supplies = await _context
+                .Supplies
+                .Include(x => x.Supplier)
+                .Include(x => x.SupplyItems)
+                .ThenInclude(y => y.Product)
+                .AsSplitQuery()
+                .ProjectTo<SupplyDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
 
-            return _mapper.Map<List<SupplyDto>>(supplies);
+            return supplies;
         }
 
         public SupplyDto GetSupplyById(int id)

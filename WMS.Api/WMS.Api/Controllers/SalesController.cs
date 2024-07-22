@@ -15,9 +15,9 @@ namespace WMS.Api.Controllers
 
         // GET: api/<SalesController>
         [HttpGet]
-        public ActionResult<List<SaleDto>> GetSales()
+        public async Task<ActionResult<List<SaleDto>>> GetSalesAsync()
         {
-            var sales = _saleService.GetSales();
+            var sales = await _saleService.GetSales();
 
             return Ok(sales);
         }
