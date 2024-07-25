@@ -105,7 +105,35 @@ public class SaleService(WmsDbContext context, IMapper mapper) : ISaleService
         }
 
         var entity = _mapper.Map<Sale>(sale);
-        _context.Sales.Update(entity);
+    
+        entity.TotalDue = sale.SaleItems.Sum(x => x.Quantity * x.UnitPrice);
+
+        foreach (var item in entity.SaleItems)
+        {
+            var product = _context.Products.FirstOrDefault(x => x.Id == item.ProductId);
+
+            if (product is null)
+            {
+                throw new InvalidOperationException($"Cannot create sale for non-existing product: {item.ProductId}.");
+            }
+
+            if (product?.QuantityInStock < item.Quantity)
+            {
+                throw new InvalidOperationException($"Not enough items in stock: {item.Quantity} for product {product.Name}.");
+            }
+
+            product.QuantityInStock -= item.Quantity;
+        }
+
+        var customer = _context.Customers.FirstOrDefault(x => x.Id == sale.CustomerId);
+
+        if (customer is null)
+        {
+            throw new InvalidOperationException($"Cannot create sale for customer which does not exist. Customer id: {sale.CustomerId}");
+        }
+        customer.Balance += entity.TotalPaid - entity.TotalDue;
+
+        var createdSale = _context.Sales.Update(entity);
         _context.SaveChanges();
     }
 }
