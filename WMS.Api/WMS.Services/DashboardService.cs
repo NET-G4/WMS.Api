@@ -34,9 +34,15 @@ public class DashboardService(WmsDbContext context) : IDashboardService
     private async Task<SummaryDto> GetSummaryAsync()
     {
         var summary = new SummaryDto();
-        summary.Revenue = _context.Sales.Sum(x => x.TotalDue) - _context.Supplies.Sum(x => x.TotalDue);
-        summary.LowQuantityProducts = _context.Products.Count(x => x.LowQuantityAmount >= x.QuantityInStock);
-        summary.CustomersAmount = _context.Customers.Count();
+        summary.Revenue = _context.Sales
+            .AsNoTracking()
+            .Sum(x => x.TotalDue) - _context.Supplies.AsNoTracking().Sum(x => x.TotalDue);
+
+        summary.LowQuantityProducts = _context.Products
+            .AsNoTracking()
+            .Count(x => x.LowQuantityAmount >= x.QuantityInStock);
+
+        summary.CustomersAmount = _context.Customers.AsNoTracking().Count();
 
         return summary;
     }
@@ -56,7 +62,7 @@ public class DashboardService(WmsDbContext context) : IDashboardService
                                   SalesCount = groupedCategories.Count()
                               };
 
-        return await salesByCategory.ToListAsync();
+        return await salesByCategory.AsSplitQuery().AsNoTracking().ToListAsync();
     }
 
     private async Task<List<SplineChart>> GetChartAsync()
@@ -98,7 +104,8 @@ public class DashboardService(WmsDbContext context) : IDashboardService
                             Income = income?.Income ?? 0,
                         };
 
-        return chartData.ToList();
+        return chartData
+            .ToList();
     }
 
     private async Task<List<TransactionDto>> GetLatestTransactionsAsync()
@@ -113,6 +120,8 @@ public class DashboardService(WmsDbContext context) : IDashboardService
                 Date = x.Date,
                 Type = "Sale"
             })
+            .AsSplitQuery()
+            .AsNoTracking()
             .ToList();
         var supplies = _context.Supplies
             .Where(x => x.Date.Day == DateTime.Now.Day)
@@ -123,6 +132,8 @@ public class DashboardService(WmsDbContext context) : IDashboardService
                 Date = x.Date,
                 Type = "Supply"
             })
+            .AsSplitQuery()
+            .AsNoTracking()
             .ToList();
 
         List<TransactionDto> transactions = [.. sales, .. supplies];

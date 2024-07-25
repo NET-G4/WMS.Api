@@ -44,6 +44,10 @@ namespace WMS.Api.Controllers
         [HttpPut("{id:int}")]
         public ActionResult UpdateSale(int id, SaleForUpdateDto sale)
         {
+            if(id != sale.Id)
+            {
+                return BadRequest($"Id : {id} does not match with sale id : {sale.Id}");
+            }
             _saleService.Update(sale);
 
             return NoContent();
