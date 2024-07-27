@@ -9,6 +9,7 @@ namespace WMS.Api.Controllers;
 
 [Route("api/products")]
 [ApiController]
+[Authorize(Roles = "Visitor")]
 public class ProductsController(IProductService productService) : ControllerBase
 {
     private readonly IProductService _productService = productService ?? throw new ArgumentNullException(nameof(productService));

@@ -1,11 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using WMS.Domain.Entities;
+using WMS.Domain.Entities.Identity;
 using WMS.Domain.Entities.Views;
 
 namespace WMS.Infrastructure.Persistence;
 
-public class WmsDbContext(DbContextOptions<WmsDbContext> options) : DbContext(options)
+public class WmsDbContext(DbContextOptions<WmsDbContext> options) 
+    : IdentityDbContext<User, Role, string>(options)
 {
     public virtual DbSet<Category> Categories { get; set; }
     public virtual DbSet<Product> Products { get; set; }

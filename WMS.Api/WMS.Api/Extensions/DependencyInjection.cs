@@ -1,6 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
+using System.Text;
+using WMS.Domain.Entities.Identity;
 using WMS.Infrastructure.Persistence;
+using WMS.Infrastructure.Persistence.Migrations;
 using WMS.Services;
 using WMS.Services.Interfaces;
 using WMS.Services.Mappings;
@@ -15,6 +21,9 @@ public static class DependencyInjection
         AddInfrastructure(services, configuration);
         AddControllers(services);
         AddSwagger(services);
+        AddAuthentication(services, configuration);
+        AddIdentity(services);
+        AddJwtHandler(services);
 
         return services;    
     }
@@ -57,5 +66,44 @@ public static class DependencyInjection
         services.AddDbContext<WmsDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
         services.AddAutoMapper(typeof(CategoryMappings).Assembly);
+    }
+
+    private static void AddAuthentication(IServiceCollection services, IConfiguration configuration)
+    {
+        var jwtOptions = configuration.GetSection("Jwt");
+
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+
+                    ValidIssuer = jwtOptions["ValidIssuer"],
+                    ValidAudience = jwtOptions["ValidAudience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(jwtOptions["SecretKey"]))
+                };
+            });
+    }
+
+    private static void AddIdentity(IServiceCollection services)
+    {
+        services.AddDefaultIdentity<User>()
+            .AddRoles<Role>()
+            .AddEntityFrameworkStores<WmsDbContext>();
+    }
+
+    private static void AddJwtHandler(IServiceCollection services)
+    {
+        services.AddSingleton<JwtHandler>();
     }
 }
