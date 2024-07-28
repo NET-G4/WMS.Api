@@ -7,7 +7,7 @@ namespace WMS.Api.Controllers;
 
 [Route("api/sales")]
 [ApiController]
-[Authorize]
+[Authorize(Roles = "Manager")]
 public class SalesController(ISaleService saleService) : ControllerBase
 {
     private readonly ISaleService _saleService = saleService

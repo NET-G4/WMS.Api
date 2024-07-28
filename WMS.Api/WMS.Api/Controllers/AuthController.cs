@@ -26,10 +26,21 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterUserDto registerUser)
     {
-        var user = _mapper.Map<User>(registerUser);
+        if (registerUser is null)
+        {
+            return BadRequest();
+        }
 
-        await _userManager.CreateAsync(user, registerUser.Password);
-        await _userManager.AddToRoleAsync(user, "Visitor");
+        var user = _mapper.Map<User>(registerUser);
+        var result = await _userManager.CreateAsync(user, registerUser.Password);
+
+        if (!result.Succeeded)
+        {
+            var errors = result.Errors.Select(x => x.Description);
+            return BadRequest(errors);
+        }
+
+        await _userManager.AddToRoleAsync(user, "Admin");
 
         return Created();
     }

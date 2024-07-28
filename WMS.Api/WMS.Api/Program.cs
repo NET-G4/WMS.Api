@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Text;
 using WMS.Api.Extensions;
 using WMS.Api.Middlewares;
 using WMS.Infrastructure.Persistence;

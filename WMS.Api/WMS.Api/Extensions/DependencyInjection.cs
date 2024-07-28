@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
 using WMS.Domain.Entities.Identity;
+using WMS.Infrastructure.Configurations;
 using WMS.Infrastructure.Persistence;
 using WMS.Infrastructure.Persistence.Migrations;
 using WMS.Services;
@@ -21,9 +22,10 @@ public static class DependencyInjection
         AddInfrastructure(services, configuration);
         AddControllers(services);
         AddSwagger(services);
-        AddAuthentication(services, configuration);
         AddIdentity(services);
+        AddAuthentication(services, configuration);
         AddJwtHandler(services);
+        AddOptions(services, configuration);
 
         return services;    
     }
@@ -97,13 +99,27 @@ public static class DependencyInjection
 
     private static void AddIdentity(IServiceCollection services)
     {
-        services.AddDefaultIdentity<User>()
-            .AddRoles<Role>()
+        services.AddIdentity<User, Role>(options =>
+        {
+            options.Password.RequiredLength = 7;
+            options.Password.RequireUppercase = false;
+            options.Password.RequireLowercase = false;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequireDigit = false;
+        })
             .AddEntityFrameworkStores<WmsDbContext>();
     }
 
     private static void AddJwtHandler(IServiceCollection services)
     {
         services.AddSingleton<JwtHandler>();
+    }
+
+    private static void AddOptions(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddOptions<JwtOptions>()
+            .Bind(configuration.GetSection(JwtOptions.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
     }
 }

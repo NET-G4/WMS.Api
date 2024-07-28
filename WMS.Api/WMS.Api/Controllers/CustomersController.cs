@@ -7,7 +7,7 @@ namespace WMS.Api.Controllers;
 
 [Route("api/customers")]
 [ApiController]
-[Authorize]
+[Authorize(Roles = "Manager")]
 public class CustomersController(ICustomerService customerService) : ControllerBase
 {
     private readonly ICustomerService _customerService = customerService 
