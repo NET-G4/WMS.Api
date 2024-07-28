@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WMS.Services.DTOs.Customer;
 using WMS.Services.Interfaces;
 
@@ -6,6 +7,7 @@ namespace WMS.Api.Controllers;
 
 [Route("api/customers")]
 [ApiController]
+[Authorize]
 public class CustomersController(ICustomerService customerService) : ControllerBase
 {
     private readonly ICustomerService _customerService = customerService 

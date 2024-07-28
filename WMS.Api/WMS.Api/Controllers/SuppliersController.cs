@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WMS.Services.DTOs.Supplier;
 using WMS.Services.Interfaces;
 
@@ -7,6 +8,7 @@ namespace WMS.Api.Controllers;
 
 [Route("api/suppliers")]
 [ApiController]
+[Authorize]
 public class SuppliersController(ISupplierService service) : ControllerBase
 {
     private readonly ISupplierService _supplierService = service

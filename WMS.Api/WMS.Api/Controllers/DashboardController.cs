@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WMS.Services.DTOs.Dashboard;
 using WMS.Services.Interfaces;
 
@@ -6,6 +7,7 @@ namespace WMS.Api.Controllers;
 
 [ApiController]
 [Route("api/dashboard")]
+[Authorize]
 public class DashboardController : ControllerBase
 {
     private readonly IDashboardService _dashboardService;
