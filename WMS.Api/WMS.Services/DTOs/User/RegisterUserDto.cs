@@ -16,4 +16,6 @@ public class RegisterUserDto
 
     [Compare(nameof(Password), ErrorMessage = "Passwords must match.")]
     public string ConfirmPassword { get; set; }
+
+    public string ClientUri { get; set; }
 }

@@ -1,12 +1,18 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using FluentEmail.MailKitSmtp;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 using Syncfusion.Licensing;
 using System.Reflection;
 using System.Text;
+using WMS.Api.Filters;
 using WMS.Domain.Entities.Identity;
+using WMS.Infrastructure;
 using WMS.Infrastructure.Configurations;
+using WMS.Infrastructure.Email;
 using WMS.Infrastructure.Persistence;
 using WMS.Services;
 using WMS.Services.Interfaces;
@@ -18,16 +24,15 @@ internal static class DependencyInjection
 {
     public static IServiceCollection ConfigureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        AddConfigurationOptions(services, configuration);
+        services.RegisterInfrastructureServices(configuration);
         AddServices(services);
-        AddInfrastructure(services, configuration);
         AddSwagger(services);
         AddIdentity(services);
         AddAuthentication(services, configuration);
+		AddSyncfusion(configuration);
 
-        AddSyncfusion(configuration);
-
-        services.AddControllers(options => options.ReturnHttpNotAcceptable = true)
+        services
+            .AddControllers(options => options.ReturnHttpNotAcceptable = true)
             .AddXmlDataContractSerializerFormatters();
         services.AddAutoMapper(typeof(CategoryMappings).Assembly);
         services.AddHttpContextAccessor();
@@ -41,6 +46,19 @@ internal static class DependencyInjection
 
         services.AddSwaggerGen(setup =>
         {
+            setup.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Title = "Warehouse Management API",
+                Version = "v1",
+                Description = "Central API for Warehouse Management System.",
+                Contact = new OpenApiContact
+                {
+                    Name = "WMS",
+                    Email = "support@wms.uz",
+                    Url = new Uri("https://wms.uz")
+                }
+            });
+
             var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var fullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
 
@@ -69,7 +87,13 @@ internal static class DependencyInjection
             };
 
             setup.AddSecurityRequirement(securityRequirement);
+
+            setup.OperationFilter<CommonErrorResponseFilter>();
+
+            // setup.SchemaFilter<IgnoreSchemaFilter>();
         });
+
+        services.AddSwaggerExamplesFromAssemblyOf<Program>();
     }
 
     private static void AddServices(IServiceCollection services)
@@ -81,14 +105,10 @@ internal static class DependencyInjection
         services.AddScoped<ISupplierService, SupplierService>();
         services.AddScoped<ISupplyService, SupplyService>();
         services.AddScoped<IDashboardService, DashboardService>();
+        services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IAuthService, AuthService>();
 
         services.AddSingleton<JwtHandler>();
-    }
-
-    private static void AddInfrastructure(IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddDbContext<WmsDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
     }
 
     private static void AddAuthentication(IServiceCollection services, IConfiguration configuration)
@@ -130,15 +150,13 @@ internal static class DependencyInjection
             options.Password.RequireNonAlphanumeric = false;
             options.Password.RequireDigit = false;
         })
-            .AddEntityFrameworkStores<WmsDbContext>();
-    }
+            .AddEntityFrameworkStores<WmsDbContext>()
+            .AddDefaultTokenProviders();
 
-    private static void AddConfigurationOptions(IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddOptions<JwtOptions>()
-            .Bind(configuration.GetSection(JwtOptions.SectionName))
-            .ValidateDataAnnotations()
-            .ValidateOnStart();
+        services.Configure<DataProtectionTokenProviderOptions>(options =>
+        {
+            options.TokenLifespan = TimeSpan.FromHours(12);
+        });
     }
 
     private static void AddSyncfusion(IConfiguration configuration)

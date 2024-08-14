@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using Syncfusion.Drawing;
 using Syncfusion.Pdf;
 using Syncfusion.Pdf.Graphics;
 using Syncfusion.Pdf.Grid;
 using System.Data;
+using WMS.Api.Filters.SwaggerExamples;
 using WMS.Domain.QueryParameters;
 using WMS.Services.Common;
 using WMS.Services.DTOs.Category;
@@ -15,17 +17,19 @@ namespace WMS.Api.Controllers;
 [Route("api/categories")]
 [ApiController]
 [Authorize]
-public class CategoriesController(ICategoryService categoryService) : ControllerBase
+public class CategoriesController(
+    ICategoryService categoryService) : ControllerBase
 {
     private readonly ICategoryService _categoryService = categoryService ?? throw new ArgumentNullException(nameof(categoryService));
 
     /// <summary>
-    /// Retrieve all categories.
+    /// Retrieves the product categories data.
     /// </summary>
     /// <param name="queryParameters">Query parameters for filtering, sorting, and pagination.</param>
-    /// <returns>A list of categories.</returns>
+    /// <response code="200">Returns the sales data</response>
     [HttpGet]
     [HttpHead]
+    [SwaggerResponse(200, "Returns the categories data", typeof(CategoriesExample))]
     public ActionResult<PaginatedList<CategoryDto>> Get([FromQuery] CategoryQueryParameters queryParameters)
     {
         var result = _categoryService.GetAll(queryParameters);

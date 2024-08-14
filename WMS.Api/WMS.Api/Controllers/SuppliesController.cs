@@ -8,7 +8,7 @@ namespace WMS.Api.Controllers;
 
 [Route("api/supplies")]
 [ApiController]
-[Authorize(Roles = "Manager")]
+[Authorize(Roles = "Admin,Manager")]
 public class SuppliesController(ISupplyService service) : ControllerBase
 {
     private readonly ISupplyService _supplyService = service

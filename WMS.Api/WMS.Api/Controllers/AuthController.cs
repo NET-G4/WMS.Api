@@ -1,10 +1,14 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
+using FluentEmail.Core;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using WMS.Domain.Entities.Identity;
+using WMS.Infrastructure.Email;
+using WMS.Infrastructure.Email.Models;
 using WMS.Services;
 using WMS.Services.DTOs.User;
+using WMS.Services.Interfaces;
 
 namespace WMS.Api.Controllers;
 
@@ -12,52 +16,67 @@ namespace WMS.Api.Controllers;
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly IMapper _mapper;
-    private readonly UserManager<User> _userManager;
-    private readonly JwtHandler _jwtHandler;
+    private readonly IAuthService _authService;
 
-    public AuthController(UserManager<User> userManager, IMapper mapper, JwtHandler jwtHander)
+    public AuthController(IAuthService authService)
     {
-        _userManager = userManager;
-        _mapper = mapper;
-        _jwtHandler = jwtHander;
+        _authService = authService;
     }
 
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterUserDto registerUser)
     {
-        if (registerUser is null)
+        var result = await _authService.RegisterAsync(registerUser);
+
+        if (result.Errors.Any())
         {
-            return BadRequest();
+            return BadRequest("Invalid registertration request.");
         }
 
-        var user = _mapper.Map<User>(registerUser);
-        var result = await _userManager.CreateAsync(user, registerUser.Password);
-
-        if (!result.Succeeded)
-        {
-            var errors = result.Errors.Select(x => x.Description);
-            return BadRequest(errors);
-        }
-
-        await _userManager.AddToRoleAsync(user, "Admin");
-
-        return Created();
+        return Accepted();
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginUserDto loginUser)
     {
-        var user = await _userManager.FindByNameAsync(loginUser.Email);
-
-        if (user is null || !await _userManager.CheckPasswordAsync(user, loginUser.Password))
-        {
-            return Unauthorized("Invalid email or password.");
-        }
-
-        var roles = await _userManager.GetRolesAsync(user);
-        var token = _jwtHandler.GenerateToken(user, roles);
+        var token = await _authService.LoginAsync(loginUser);
 
         return Ok(token);
+    }
+
+    [HttpPost("forgotPassword")]
+    public async Task<IActionResult> ForgotPassword(ForgotPasswordDto forgotPassword)
+    {
+        await _authService.ForgotPasswordAsync(forgotPassword);
+
+        return NoContent();
+    }
+
+    [HttpPost("resetPassword")]
+    public async Task<IActionResult> ResetPassword(ResetPasswordDto resetPassword)
+    {
+        var result = await _authService.ResetPasswordAsync(resetPassword);
+
+        if (result.Errors.Any())
+        {
+            var errors = result.Errors.Select(x => x.Description);
+            return BadRequest(errors);
+        }
+
+        return NoContent();
+    }
+
+    [HttpPost("confirmEmail")]
+    public async Task<IActionResult> ConfirmEmail(ConfirmEmailDto confirmEmail)
+    {
+        var result = await _authService.ConfirmEmailAsync(confirmEmail);
+
+        if (result.Errors.Any())
+        {
+            var errors = result.Errors.Select(x => x.Description);
+            return BadRequest(errors);
+        }
+
+        return NoContent();
     }
 }
