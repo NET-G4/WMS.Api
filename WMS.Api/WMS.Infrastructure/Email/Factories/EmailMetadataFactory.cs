@@ -1,5 +1,5 @@
 ﻿using FluentEmail.Core.Models;
-using WMS.Infrastructure.Email.Models;
+using WMS.Infrastructure.Models;
 
 namespace WMS.Infrastructure.Email.Factories;
 
@@ -9,6 +9,7 @@ public class EmailMetadataFactory : IEmailMetadaFactory
     {
         { EmailType.EmailConfirmation, "Email Confirmation" },
         { EmailType.ForgotPassword, "Password Reset" },
+        { EmailType.DebtNotification, "Debt warning" }
     };
 
     public EmailMetadata Create(

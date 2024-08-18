@@ -6,6 +6,8 @@ using WMS.Infrastructure.Configurations;
 using WMS.Infrastructure.Email;
 using WMS.Infrastructure.Email.Factories;
 using WMS.Infrastructure.Persistence;
+using WMS.Infrastructure.Sms;
+using WMS.Infrastructure.Sms.Interfaces;
 
 namespace WMS.Infrastructure;
 
@@ -62,5 +64,6 @@ public static class DependencyInjection
     {
         services.AddSingleton<IEmailMetadaFactory, EmailMetadataFactory>();
         services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<ISmsService, SmsService>();
     }
 }

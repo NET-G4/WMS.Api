@@ -7,11 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Email\Templates\DebtNotificationTemplate.cshtml" />
     <None Remove="Email\Templates\EmailConfirmationTemplate.cshtml" />
     <None Remove="Email\Templates\ForgotPasswordTemplate.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Email\Templates\DebtNotificationTemplate.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Email\Templates\EmailConfirmationTemplate.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>

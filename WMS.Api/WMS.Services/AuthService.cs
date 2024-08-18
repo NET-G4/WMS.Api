@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
-using MailKit;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using WMS.Domain.Entities.Identity;
 using WMS.Domain.Exceptions;
 using WMS.Infrastructure.Email;
 using WMS.Infrastructure.Email.Factories;
-using WMS.Infrastructure.Email.Models;
+using WMS.Infrastructure.Models;
 using WMS.Services.DTOs.User;
 using WMS.Services.Interfaces;
 

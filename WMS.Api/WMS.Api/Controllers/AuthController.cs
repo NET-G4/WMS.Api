@@ -1,12 +1,4 @@
-﻿using AutoMapper;
-using FluentEmail.Core;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
-using WMS.Domain.Entities.Identity;
-using WMS.Infrastructure.Email;
-using WMS.Infrastructure.Email.Models;
-using WMS.Services;
+﻿using Microsoft.AspNetCore.Mvc;
 using WMS.Services.DTOs.User;
 using WMS.Services.Interfaces;
 

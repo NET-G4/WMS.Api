@@ -1,4 +1,4 @@
-﻿namespace WMS.Infrastructure.Email.Models;
+﻿namespace WMS.Infrastructure.Models;
 
 public class UserInfo
 {
@@ -13,7 +13,7 @@ public class UserInfo
         Name = name;
     }
 
-    public UserInfo(string email, string name, string? device, string? operatingSystem) 
+    public UserInfo(string email, string name, string? device, string? operatingSystem)
         : this(email, name)
     {
         Device = device;

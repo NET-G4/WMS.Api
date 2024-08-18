@@ -1,6 +1,6 @@
 ﻿using FluentEmail.Core.Models;
 
-namespace WMS.Infrastructure.Email.Models;
+namespace WMS.Infrastructure.Models;
 
 public class EmailMetadata
 {

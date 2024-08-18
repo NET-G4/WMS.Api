@@ -1,4 +1,4 @@
-﻿using WMS.Infrastructure.Email.Models;
+﻿using WMS.Infrastructure.Models;
 
 namespace WMS.Infrastructure.Email;
 

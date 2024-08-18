@@ -1,5 +1,5 @@
 ﻿using FluentEmail.Core;
-using WMS.Infrastructure.Email.Models;
+using WMS.Infrastructure.Models;
 
 namespace WMS.Infrastructure.Email;
 
@@ -9,7 +9,9 @@ public class EmailService : IEmailService
     {
         { EmailType.EmailConfirmation, "EmailConfirmationTemplate.cshtml" },
         { EmailType.ForgotPassword, "ForgotPasswordTemplate.cshtml" },
+        { EmailType.DebtNotification, "DebtNotificationTemplate.cshtml" }
     };
+
     private readonly IFluentEmail _fluentEmail;
 
     public EmailService(IFluentEmail fluentEmail)
@@ -29,7 +31,7 @@ public class EmailService : IEmailService
 
     private string GetTemplate(EmailType emailType)
     {
-        string templateName = templateNames[emailType] 
+        string templateName = templateNames[emailType]
             ?? throw new ArgumentOutOfRangeException(nameof(emailType));
 
         return Path.Combine(AppContext.BaseDirectory, "Email/Templates", templateName);

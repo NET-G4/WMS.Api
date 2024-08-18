@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System.Text;
 using WMS.Api.Extensions;
+using WMS.Api.Jobs;
 using WMS.Api.Middlewares;
 using WMS.Infrastructure.Persistence;
 
@@ -21,6 +22,7 @@ builder.Logging.ClearProviders();
 builder.Host.UseSerilog();
 
 builder.Services.ConfigureServices(builder.Configuration);
+builder.Services.AddHostedService<CustomerDebtNotificationService>();
 
 var app = builder.Build();
 
