@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using WMS.Domain.Entities;
 using WMS.Domain.Exceptions;
 using WMS.Infrastructure.Persistence;
@@ -50,7 +51,7 @@ public class CustomerService(WmsDbContext context, IMapper mapper) : ICustomerSe
 
     public List<CustomerDto> GetCustomers()
     {
-        var entities = _context.Customers.ToList();
+        var entities = _context.Customers.AsNoTracking().ToList();
 
         return _mapper.Map<List<CustomerDto>>(entities);
     }

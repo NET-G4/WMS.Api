@@ -58,7 +58,7 @@ public class CategoryService(IMapper mapper, WmsDbContext context) : ICategorySe
 
     public async Task<List<CategoryDto>> GetAllAsync()
     {
-        var categories = await _context.Categories.ToListAsync();
+        var categories = await _context.Categories.AsNoTracking().ToListAsync();
         var dtos = _mapper.Map<List<CategoryDto>>(categories);
 
         return dtos ?? [];
@@ -66,7 +66,7 @@ public class CategoryService(IMapper mapper, WmsDbContext context) : ICategorySe
 
     public CategoryDto GetById(int id)
     {
-        var entity = _context.Categories.FirstOrDefault(x => x.Id == id);
+        var entity = _context.Categories.AsNoTracking().FirstOrDefault(x => x.Id == id);
 
         if (entity is null)
         {
